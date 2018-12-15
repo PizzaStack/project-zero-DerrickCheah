@@ -11,43 +11,43 @@ public class CustomerTest {
 	
 	@Test
 	public void canCreateCustomerAccount() {
-		String username = "derrick.cheah";
+		String customerId = "derrick.cheah";
 		String password = "Password123";
 		String accountType = "Checking";
-		Customer customer = new Customer(username, password);
+		Customer customer = new Customer(customerId, password);
 	}
 	
 	@Test
 	public void canLogIn() {
-		String username = "derrick.cheah";
+		String customerId = "derrick.cheah";
 		String password = "Password123";
-		Customer customer = new Customer(username, password);
+		Customer customer = new Customer(customerId, password);
 		Person person = customer.logIn();
 	}
 	
 	@Test
 	public void canGetUsername() {
-		String username = "derrick.cheah";
+		String customerId = "derrick.cheah";
 		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		customer.setUsername(username);
-		assertEquals(customer.getUsername(), username);
+		Customer customer = new Customer(customerId, password);
+		customer.setId(customerId);
+		assertEquals(customer.getId(), customerId);
 	}
 	
 	@Test
 	public void canGetPassword() {
-		String username = "derrick.cheah";
+		String customerId = "derrick.cheah";
 		String password = "Password123";
-		Customer customer = new Customer(username, password);
+		Customer customer = new Customer(customerId, password);
 		customer.setPassword(password);
 		assertEquals(customer.getPassword(), password);
 	}
 	
 	@Test
 	public void canGetFullName() {
-		String username = "derrick.cheah";
+		String customerId = "derrick.cheah";
 		String password = "Password123";
-		Customer customer = new Customer(username, password);
+		Customer customer = new Customer(customerId, password);
 		
 		String firstName = "Derrick";
 		String lastName = "Cheah";
@@ -56,56 +56,56 @@ public class CustomerTest {
 		assertEquals(customer.getFullName(), fullName);
 	}
 	
-	@Test
-	public void canGetBalance() {
-		String username = "derrick.cheah";
-		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		customer.getBalance();
-	}
-	
-	@Test
-	public void canDepositFunds() {
-		String username = "derrick.cheah";
-		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		double amount = 50.00;
-		customer.deposit(amount);
-		assertEquals(customer.getBalance(), amount, 0.001);
-	}
-	
-	@Test
-	public void canNotDepositNegativeFunds() {
-		String username = "derrick.cheah";
-		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		double amount = -50.00;
-		customer.deposit(amount);
-		assertEquals(customer.getBalance(), 0.00, 0.001);
-	}
-	
-	@Test
-	public void canWithdrawFunds() {
-		String username = "derrick.cheah";
-		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		double depositAmount = 50.00;
-		customer.deposit(depositAmount);
-		double withdrawAmount = 25.00;
-		customer.withdraw(withdrawAmount);
-		assertEquals(customer.getBalance(), depositAmount - withdrawAmount, 0.001);
-	}
-	
-	@Test
-	public void canNotOverDrawFunds() {
-		String username = "derrick.cheah";
-		String password = "Password123";
-		Customer customer = new Customer(username, password);
-		double depositAmount = 50.00;
-		customer.deposit(depositAmount);
-		double withdrawAmount = 100.00;
-		customer.withdraw(withdrawAmount);
-		assertEquals(customer.getBalance(), depositAmount, 0.001);
-	}
+//	@Test
+//	public void canGetBalance() {
+//		String customerId = "derrick.cheah";
+//		String password = "Password123";
+//		Customer customer = new Customer(customerId, password);
+//		customer.getBalance();
+//	}
+//	
+//	@Test
+//	public void canDepositFunds() {
+//		String customerId = "derrick.cheah";
+//		String password = "Password123";
+//		Customer customer = new Customer(customerId, password);
+//		double amount = 50.00;
+//		customer.deposit(amount);
+//		assertEquals(customer.getBalance(), amount, 0.001);
+//	}
+//	
+//	@Test
+//	public void canNotDepositNegativeFunds() {
+//		String customerId = "derrick.cheah";
+//		String password = "Password123";
+//		Customer customer = new Customer(customerId, password);
+//		double amount = -50.00;
+//		customer.deposit(amount);
+//		assertEquals(customer.getBalance(), 0.00, 0.001);
+//	}
+//	
+//	@Test
+//	public void canWithdrawFunds() {
+//		String customerId = "derrick.cheah";
+//		String password = "Password123";
+//		Customer customer = new Customer(customerId, password);
+//		double depositAmount = 50.00;
+//		customer.deposit(depositAmount);
+//		double withdrawAmount = 25.00;
+//		customer.withdraw(withdrawAmount);
+//		assertEquals(customer.getBalance(), depositAmount - withdrawAmount, 0.001);
+//	}
+//	
+//	@Test
+//	public void canNotOverDrawFunds() {
+//		String customerId = "derrick.cheah";
+//		String password = "Password123";
+//		Customer customer = new Customer(customerId, password);
+//		double depositAmount = 50.00;
+//		customer.deposit(depositAmount);
+//		double withdrawAmount = 100.00;
+//		customer.withdraw(withdrawAmount);
+//		assertEquals(customer.getBalance(), depositAmount, 0.001);
+//	}
 	
 }

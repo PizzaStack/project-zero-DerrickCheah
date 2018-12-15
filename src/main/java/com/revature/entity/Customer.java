@@ -2,21 +2,17 @@ package com.revature.entity;
 
 public class Customer {
 
-	private String username;
+	private String customerId;
 	private String password;
 	private String fullName;
-	private Account account;
 
-	public Customer() {
-	}
-
-	public Customer(String username, String password) {
-		this.username = username;
+	public Customer(String customerId, String password) {
+		this.customerId = customerId;
 		this.password = password;
 	}
 
-	public String getUsername() {
-		return this.username;
+	public String getId() {
+		return this.customerId;
 	}
 
 	public String getPassword() {
@@ -27,8 +23,8 @@ public class Customer {
 		return this.fullName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setId(String customerId) {
+		this.customerId = customerId;
 	}
 
 	public void setPassword(String password) {

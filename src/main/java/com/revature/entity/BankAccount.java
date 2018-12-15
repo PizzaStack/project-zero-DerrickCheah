@@ -1,6 +1,6 @@
 package com.revature.entity;
 
-public class BankAccount {
+public abstract class BankAccount {
 	private String customerId;
 	private double balance;
 
@@ -8,6 +8,8 @@ public class BankAccount {
 		this.setCustomerId(customerId);
 		this.balance = 0.00;
 	}
+
+	public abstract String getAccountType();
 
 	public double getBalance() {
 		return this.balance;
