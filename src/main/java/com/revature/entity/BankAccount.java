@@ -1,22 +1,40 @@
 package com.revature.entity;
 
 public abstract class BankAccount {
+	private int accountNumber;
 	private String customerId;
+	private String password;
 	private double balance;
+	private boolean pending;
 
-	public BankAccount(String customerId) {
+	public BankAccount(int accountNumber, String customerId, String password) {
+		this.accountNumber = accountNumber;
 		this.setCustomerId(customerId);
+		this.setPassword(password);
 		this.balance = 0.00;
+		this.pending = true;
 	}
 
 	public abstract String getAccountType();
+	
+	public int getAccountNumber() {
+		return this.accountNumber;
+	}
 
 	public double getBalance() {
 		return this.balance;
 	}
 
 	public String getCustomerId() {
-		return customerId;
+		return this.customerId;
+	}
+	
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public boolean getPending() {
+		return this.pending;
 	}
 
 	public void setBalance(double amount) {
@@ -25,6 +43,14 @@ public abstract class BankAccount {
 
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 	public void deposit(double amount) {

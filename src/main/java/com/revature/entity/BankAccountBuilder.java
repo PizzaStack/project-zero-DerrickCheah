@@ -4,7 +4,9 @@ import java.util.function.Consumer;
 
 public class BankAccountBuilder {
 	
+	public int accountNumber;
 	public String customerId;
+	public String password;
 	public Account account = Account.CHECKING;
 	
 	public BankAccountBuilder with(Consumer<BankAccountBuilder> builderFunction) {
@@ -14,11 +16,11 @@ public class BankAccountBuilder {
 	
 	public BankAccount buildBankAccount() {
 		if (account.equals(Account.CHECKING)) {
-			return new CheckingAccount(customerId);
+			return new CheckingAccount(accountNumber, customerId, password);
 		} else if (account.equals(Account.SAVINGS)) {
-			return new SavingsAccount(customerId);
+			return new SavingsAccount(accountNumber, customerId, password);
 		} else {
-			return new JointAccount(customerId);
+			return new JointAccount(accountNumber, customerId, password);
 		}
 	}
 }
