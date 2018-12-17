@@ -7,7 +7,7 @@ public class BankAccountBuilder {
 	public int accountNumber;
 	public String customerId;
 	public String password;
-	public Account account = Account.CHECKING;
+	public Account account;
 	
 	public BankAccountBuilder with(Consumer<BankAccountBuilder> builderFunction) {
 		builderFunction.accept(this);

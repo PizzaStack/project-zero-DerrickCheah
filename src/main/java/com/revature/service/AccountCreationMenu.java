@@ -1,5 +1,9 @@
 package com.revature.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 import com.revature.entity.Account;
@@ -12,61 +16,92 @@ public class AccountCreationMenu {
 	private String customerId;
 	private String password;
 	private Account accountType;
+	private BankAccount bankAccount;
+	private String folderLocation = "C:\\Users\\Derrick\\Documents\\Revature\\project-zero-DerrickCheah\\TextFiles\\";
+	private File usernames = new File(folderLocation + "Usernames.txt");
+	private File passwords = new File(folderLocation + "Passwords.txt");
+	private File checkingAccount = new File(folderLocation + "CheckingAccounts.txt");
+	private File savingsAccount = new File(folderLocation + "SavingsAccount.txt");
+	private File jointAccount = new File(folderLocation + "JointAccounts.txt");
 
 	public AccountCreationMenu() {
-		Scanner input = new Scanner(System.in);
-		System.out.print("Please enter a unique username: ");
-		this.customerId = input.nextLine();
+		try (PrintStream usernamesPS = new PrintStream(new FileOutputStream(usernames, true));
+				PrintStream passwordsPS = new PrintStream(new FileOutputStream(passwords, true));
+				PrintStream checkingPS = new PrintStream(new FileOutputStream(checkingAccount, true));
+				PrintStream savingsPS = new PrintStream(new FileOutputStream(savingsAccount, true));
+				PrintStream jointPS = new PrintStream(new FileOutputStream(jointAccount, true));) {
 
-		System.out.println();
+			Scanner input = new Scanner(System.in);
+			System.out.print("Please enter a unique username: ");
+			this.customerId = input.nextLine();
+			usernamesPS.println(this.customerId);
 
-		System.out.print("Please enter a password: ");
-		this.password = input.nextLine();
+			System.out.println();
 
-		System.out.println();
+			System.out.print("Please enter a password: ");
+			this.password = input.nextLine();
+			passwordsPS.println(this.password);
 
-		System.out.println("What type of account would you like to create?");
-		System.out.println("\t1. Checking Account\n\t2. Savings Account\n\t3. Joint Account");
+			System.out.println();
 
-		String choice = input.nextLine();
-		choice = choice.toLowerCase();
+			System.out.println("What type of account would you like to create?");
+			System.out.println("\t1. Checking Account\n\t2. Savings Account\n\t3. Joint Account");
 
-		boolean b = true;
+			String choice = input.nextLine();
+			choice = choice.toLowerCase();
 
-		do {
-			if (choice.equals("1") || choice.equals("checking") || choice.equals("checking account")) {
-				this.accountType = Account.CHECKING;
-				b = false;
-			} else if (choice.equals("2") || choice.equals("savings") || choice.equals("savings account")) {
-				this.accountType = Account.SAVINGS;
-				b = false;
-			} else if (choice.equals("3") || choice.equals("joint") || choice.equals("joint account")) {
-				this.accountType = Account.JOINT;
-				b = false;
-			} else {
-				System.out.print("Please enter a valid input: ");
-				input = new Scanner(System.in);
-				choice = input.nextLine();
-				choice = choice.toLowerCase();
-			}
-		} while (b);
+			boolean b = true;
 
-		System.out.println();
+			do {
+				if (choice.equals("1") || choice.equals("checking") || choice.equals("checking account")) {
+					this.accountType = Account.CHECKING;
+					checkingPS.println("1");
+					savingsPS.println("0");
+					jointPS.println("0");
+					b = false;
+				} else if (choice.equals("2") || choice.equals("savings") || choice.equals("savings account")) {
+					this.accountType = Account.SAVINGS;
+					checkingPS.println("0");
+					savingsPS.println("1");
+					jointPS.println("0");
+					b = false;
+				} else if (choice.equals("3") || choice.equals("joint") || choice.equals("joint account")) {
+					this.accountType = Account.JOINT;
+					checkingPS.println("0");
+					savingsPS.println("0");
+					jointPS.println("1");
+					b = false;
+				} else {
+					System.out.print("Please enter a valid input: ");
+					input = new Scanner(System.in);
+					choice = input.nextLine();
+					choice = choice.toLowerCase();
+				}
+			} while (b);
 
-		input.close();
+			System.out.println();
 
-		BankAccount account = new BankAccountBuilder().with($ -> {
-			$.accountNumber = AccountCreationMenu.accountNumber;
-			$.customerId = this.customerId;
-			$.password = this.password;
-			$.account = this.accountType;
-		}).buildBankAccount();
-		
-		//TODO
-		//Store account information as an arraylist.
+			input.close();
 
-		accountNumber++;
-		
-		System.out.println("Application Pending. Come back later.");
+			this.bankAccount = new BankAccountBuilder().with($ -> {
+				$.accountNumber = AccountCreationMenu.accountNumber;
+				$.customerId = this.customerId;
+				$.password = this.password;
+				$.account = this.accountType;
+			}).buildBankAccount();
+
+			// TODO
+			// Store account information as an arraylist.
+
+			accountNumber++;
+
+			System.out.println("Application Pending. Come back later.");
+		} catch (FileNotFoundException e) {
+
+		}
+	}
+
+	public BankAccount getAccount() {
+		return this.bankAccount;
 	}
 }
