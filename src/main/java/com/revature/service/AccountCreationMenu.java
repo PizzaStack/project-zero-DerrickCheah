@@ -10,16 +10,15 @@ import com.revature.entity.BankAccountBuilder;
 public class AccountCreationMenu {
 
 	public static int accountNumber = 0;
-	private String customerId;
+	private String username;
+	private String username2;
 	private String password;
 	private String firstName;
 	private String lastName;
 	private Account accountType;
 	private BankAccount bankAccount;
 
-	public AccountCreationMenu() {
-
-		Scanner input = new Scanner(System.in);
+	public AccountCreationMenu(Scanner input, Connection connection) {
 
 		System.out.print("Please enter your first name: ");
 		this.firstName = input.nextLine();
@@ -32,7 +31,7 @@ public class AccountCreationMenu {
 		System.out.println();
 
 		System.out.print("Please enter a unique username: ");
-		this.customerId = input.nextLine();
+		this.username = input.nextLine();
 
 		System.out.println();
 
@@ -40,6 +39,9 @@ public class AccountCreationMenu {
 		this.password = input.nextLine();
 
 		System.out.println();
+
+		DAO dao = new DAO();
+		dao.setCustomerDBValues(connection, this.firstName, this.lastName, this.username, this.password);
 
 		System.out.println("What type of account would you like to create?");
 		System.out.println("\t1. Checking Account\n\t2. Savings Account\n\t3. Joint Account");
@@ -53,12 +55,16 @@ public class AccountCreationMenu {
 			if (choice.equals("1") || choice.equals("checking") || choice.equals("checking account")) {
 				this.accountType = Account.CHECKING;
 				b = false;
+				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber);
 			} else if (choice.equals("2") || choice.equals("savings") || choice.equals("savings account")) {
 				this.accountType = Account.SAVINGS;
 				b = false;
+				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber);
 			} else if (choice.equals("3") || choice.equals("joint") || choice.equals("joint account")) {
 				this.accountType = Account.JOINT;
+				// Enter information for second user
 				b = false;
+				dao.setJointDBValues(connection, username, username2, accountNumber);
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);
@@ -67,24 +73,20 @@ public class AccountCreationMenu {
 			}
 		} while (b);
 
-		System.out.println();
+		accountNumber++;
 
-		input.close();
+		System.out.println();
 
 		this.bankAccount = new BankAccountBuilder().with($ -> {
 			$.accountNumber = AccountCreationMenu.accountNumber;
-			$.customerId = this.customerId;
+			$.username = this.username;
 			$.password = this.password;
 			$.account = this.accountType;
 		}).buildBankAccount();
 
-		accountNumber++;
-
-		CreateAccountDAO dao = new CreateAccountDAO();
-		Connection connection = dao.getConnection();
-		dao.setDBValues(connection, this.firstName, this.lastName, this.customerId, this.password);
-
 		System.out.println("Application Creation Succesful! Please Check Back Later.");
+		System.out.println("Returning to main menu...");
+		System.out.println();
 	}
 
 	public BankAccount getAccount() {

@@ -7,7 +7,7 @@ public class Employee extends Person{
 	}
 
 	public String viewId(BankAccount account) {
-		return account.getCustomerId();
+		return account.getUsername();
 	}
 	
 	public void approve() {

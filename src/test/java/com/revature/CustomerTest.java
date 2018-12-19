@@ -8,7 +8,7 @@ import com.revature.entity.Customer;
 import com.revature.entity.Person;
 
 public class CustomerTest {
-	
+	@SuppressWarnings("unused")
 	@Test
 	public void canCreateCustomerAccount() {
 		String customerId = "derrick.cheah";

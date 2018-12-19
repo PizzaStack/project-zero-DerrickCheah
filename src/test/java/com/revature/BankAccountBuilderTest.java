@@ -9,11 +9,11 @@ import com.revature.entity.BankAccount;
 import com.revature.entity.BankAccountBuilder;
 
 public class BankAccountBuilderTest {
-
+	@SuppressWarnings("unused")
 	@Test
 	public void canCreateBankAccount() {
 		BankAccount account = new BankAccountBuilder().with($ -> {
-			$.customerId = "derrick.cheah";
+			$.username = "derrick.cheah";
 			$.password = "Password123";
 			$.account = Account.CHECKING;
 		}).buildBankAccount();
@@ -22,7 +22,7 @@ public class BankAccountBuilderTest {
 	@Test
 	public void canDepositFunds() {
 		BankAccount account = new BankAccountBuilder().with($ -> {
-			$.customerId = "derrick.cheah";
+			$.username = "derrick.cheah";
 			$.password = "Password123";
 			$.account = Account.CHECKING;
 		}).buildBankAccount();
@@ -35,7 +35,7 @@ public class BankAccountBuilderTest {
 	@Test
 	public void canWithdrawFunds() {
 		BankAccount account = new BankAccountBuilder().with($ -> {
-			$.customerId = "derrick.cheah";
+			$.username = "derrick.cheah";
 			$.password = "Password123";
 			$.account = Account.CHECKING;
 		}).buildBankAccount();
@@ -52,7 +52,7 @@ public class BankAccountBuilderTest {
 	@Test
 	public void canGetAccountType() {
 		BankAccount account = new BankAccountBuilder().with($ -> {
-			$.customerId = "derrick.cheah";
+			$.username = "derrick.cheah";
 			$.password = "Password123";
 			$.account = Account.JOINT;
 		}).buildBankAccount();
