@@ -9,7 +9,7 @@ import com.revature.entity.BankAccountBuilder;
 
 public class AccountCreationMenu {
 
-	public static int accountNumber = 0;
+	public static int accountNumber = 1;
 	private String username;
 	private String username2;
 	private String password;
@@ -55,16 +55,25 @@ public class AccountCreationMenu {
 			if (choice.equals("1") || choice.equals("checking") || choice.equals("checking account")) {
 				this.accountType = Account.CHECKING;
 				b = false;
-				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber);
+				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Pending");
+				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username, AccountCreationMenu.accountNumber,
+						"Not Active");
 			} else if (choice.equals("2") || choice.equals("savings") || choice.equals("savings account")) {
 				this.accountType = Account.SAVINGS;
 				b = false;
-				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber);
+				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Pending");
+				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username, AccountCreationMenu.accountNumber,
+						"Not Active");
 			} else if (choice.equals("3") || choice.equals("joint") || choice.equals("joint account")) {
 				this.accountType = Account.JOINT;
 				// Enter information for second user
 				b = false;
-				dao.setJointDBValues(connection, username, username2, accountNumber);
+				dao.setJointDBValues(connection, this.username, this.username2, AccountCreationMenu.accountNumber,
+						"Pending");
+				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
+				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);
@@ -72,8 +81,6 @@ public class AccountCreationMenu {
 				choice = choice.toLowerCase();
 			}
 		} while (b);
-
-		accountNumber++;
 
 		System.out.println();
 
