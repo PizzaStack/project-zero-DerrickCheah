@@ -1,6 +1,7 @@
 package com.revature.service;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -51,5 +52,37 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean checkCustomerLogin(Connection connection, String username, String password) {
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(
+					String.format("select username, password from customer where username = '%s'", username));
+			while (rs.next()) {
+				if (rs.getString(2).equals(password)) {
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean checkEmployeeLogin(Connection connection, String username, String password) {
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(
+					String.format("select username, password from employee where username = '%s'", username));
+			while (rs.next()) {
+				if (rs.getString(2).equals(password)) {
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
