@@ -1,21 +1,15 @@
 package com.revature.entity;
 
-public abstract class BankAccount {
+public class BankAccount {
 	private int accountNumber;
 	private String username;
-	private String password;
 	private double balance;
-	private boolean pending;
 
-	public BankAccount(int accountNumber, String username, String password) {
+	public BankAccount(double balance, int accountNumber, String username) {
 		this.accountNumber = accountNumber;
 		this.setUsername(username);
-		this.setPassword(password);
-		this.balance = 0.00;
-		this.pending = true;
+		this.balance = balance;
 	}
-
-	public abstract String getAccountType();
 	
 	public int getAccountNumber() {
 		return this.accountNumber;
@@ -28,14 +22,6 @@ public abstract class BankAccount {
 	public String getUsername() {
 		return this.username;
 	}
-	
-	public String getPassword() {
-		return this.password;
-	}
-	
-	public boolean getPending() {
-		return this.pending;
-	}
 
 	public void setBalance(double amount) {
 		this.balance = amount;
@@ -44,31 +30,27 @@ public abstract class BankAccount {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public void setPending(boolean pending) {
-		this.pending = pending;
-	}
 
-	public void deposit(double amount) {
+	public boolean deposit(double amount) {
 		if (amount >= 0) {
 			double newBalance = this.getBalance() + amount;
 			this.setBalance(newBalance);
+			return false;
 		} else {
-			System.out.println("Please enter a valid amount.");
+			System.out.print("Please enter a valid amount: ");
 		}
+		return true;
 	}
 
-	public void withdraw(double amount) {
-		if (amount <= this.getBalance()) {
+	public boolean withdraw(double amount) {
+		if (amount <= this.getBalance() && amount >= 0) {
 			double newBalance = this.getBalance() - amount;
 			this.setBalance(newBalance);
+			return false;
 		} else {
-			System.out.println("Insufficient Funds.");
+			System.out.print("Insufficient Funds. Please enter a valid amount: ");
 		}
+		return true;
 	}
 
 }

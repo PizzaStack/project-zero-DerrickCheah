@@ -12,12 +12,12 @@ public class CustomerLoginMenu {
 		boolean loop = true;
 		while (loop) {
 			System.out.print("Please enter your username: ");
-			this.username = input.nextLine();
+			this.username = input.next();
 
 			System.out.println();
 
 			System.out.print("Please enter your password: ");
-			this.password = input.nextLine();
+			this.password = input.next();
 
 			DAO dao = new DAO();
 			boolean login = dao.checkCustomerLogin(connection, this.username, this.password);

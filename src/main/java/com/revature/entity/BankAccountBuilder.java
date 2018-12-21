@@ -6,7 +6,7 @@ public class BankAccountBuilder {
 	
 	public int accountNumber;
 	public String username;
-	public String password;
+	public double balance;
 	public Account account;
 	
 	public BankAccountBuilder with(Consumer<BankAccountBuilder> builderFunction) {
@@ -15,12 +15,6 @@ public class BankAccountBuilder {
 	}
 	
 	public BankAccount buildBankAccount() {
-		if (account.equals(Account.CHECKING)) {
-			return new CheckingAccount(accountNumber, username, password);
-		} else if (account.equals(Account.SAVINGS)) {
-			return new SavingsAccount(accountNumber, username, password);
-		} else {
-			return new JointAccount(accountNumber, username, password);
-		}
+		return new BankAccount(this.balance, this.accountNumber, this.username);
 	}
 }

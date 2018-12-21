@@ -22,15 +22,16 @@ public class App {
 			System.out.println("\t1. Apply for a new account" + "\n\t2. Customer log in" + "\n\t3. Employee log in"
 					+ "\n\t4. Exit");
 
-			String n = input.nextLine();
+			String n = input.next();
+			n = n.toLowerCase();
 
-			if (n.equals("1")) {
+			if (n.equals("1") || n.contains("apply")) {
 				new AccountCreationMenu(input, connection);
-			} else if (n.equals("2")) {
+			} else if (n.equals("2") || n.contains("customer")) {
 				new CustomerLoginMenu(input, connection);
-			} else if (n.equals("3")) {
+			} else if (n.equals("3") || n.contains("employee")) {
 				new EmployeeLoginMenu(input, connection);
-			} else if (n.equals("4")) {
+			} else if (n.equals("4") || n.contains("exit")) {
 				System.out.println("Thank you for banking with us!");
 				bool = false;
 			}
