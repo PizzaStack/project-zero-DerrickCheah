@@ -4,8 +4,8 @@ public class JointAccount extends BankAccount {
 	
 	private final String ACCOUNTTYPE = "JOINT";
 
-	public JointAccount(double balance, int accountNumber, String username) {
-		super(balance, accountNumber, username);
+	public JointAccount(double balance, String username) {
+		super(balance, username);
 	}
 	
 	public String getAccountType() {

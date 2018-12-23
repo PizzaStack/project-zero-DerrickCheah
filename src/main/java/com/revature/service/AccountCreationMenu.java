@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 public class AccountCreationMenu {
 
-	public static int accountNumber = 1;
 	private String username;
 	private String username2;
 	private String password;
@@ -52,23 +51,20 @@ public class AccountCreationMenu {
 		do {
 			if (choice.equals("1") || choice.contains("checking")) {
 				b = false;
-				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Pending");
-				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
-				dao.setJointDBValues(connection, this.username, this.username, AccountCreationMenu.accountNumber,
-						"Not Active");
+				dao.setCheckingDBValues(connection, this.username, "Pending");
+				dao.setSavingsDBValues(connection, this.username, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else if (choice.equals("2") || choice.contains("savings")) {
 				b = false;
-				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Pending");
-				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
-				dao.setJointDBValues(connection, this.username, this.username, AccountCreationMenu.accountNumber,
-						"Not Active");
+				dao.setSavingsDBValues(connection, this.username, "Pending");
+				dao.setCheckingDBValues(connection, this.username, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else if (choice.equals("3") || choice.contains("joint")) {
 				// Enter information for second user
 				b = false;
-				dao.setJointDBValues(connection, this.username, this.username2, AccountCreationMenu.accountNumber,
-						"Pending");
-				dao.setCheckingDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
-				dao.setSavingsDBValues(connection, this.username, AccountCreationMenu.accountNumber, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username2, "Pending");
+				dao.setCheckingDBValues(connection, this.username, "Not Active");
+				dao.setSavingsDBValues(connection, this.username, "Not Active");
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);

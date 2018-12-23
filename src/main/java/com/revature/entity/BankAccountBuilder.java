@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 public class BankAccountBuilder {
 	
-	public int accountNumber;
 	public String username;
 	public double balance;
 	public Account account;
@@ -15,6 +14,6 @@ public class BankAccountBuilder {
 	}
 	
 	public BankAccount buildBankAccount() {
-		return new BankAccount(this.balance, this.accountNumber, this.username);
+		return new BankAccount(this.balance, this.username);
 	}
 }

@@ -4,8 +4,8 @@ public class CheckingAccount extends BankAccount{
 	
 	private final String ACCOUNTTYPE = "CHECKING";
 
-	public CheckingAccount(double balance, int accountNumber, String username) {
-		super(balance, accountNumber, username);
+	public CheckingAccount(double balance, String username) {
+		super(balance, username);
 	}
 	
 	public String getAccountType() {

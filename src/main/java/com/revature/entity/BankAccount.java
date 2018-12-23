@@ -1,18 +1,12 @@
 package com.revature.entity;
 
 public class BankAccount {
-	private int accountNumber;
 	private String username;
 	private double balance;
 
-	public BankAccount(double balance, int accountNumber, String username) {
-		this.accountNumber = accountNumber;
+	public BankAccount(double balance, String username) {
 		this.setUsername(username);
 		this.balance = balance;
-	}
-	
-	public int getAccountNumber() {
-		return this.accountNumber;
 	}
 
 	public double getBalance() {
@@ -53,4 +47,12 @@ public class BankAccount {
 		return true;
 	}
 
+	public void transfer(BankAccount other, double amount) {
+		if (this.getBalance() < amount || amount < 0) {
+			System.out.print("Insufficient Funds. Please enter a valid amount: ");
+		} else {
+			other.setBalance(other.getBalance() + amount);
+			this.setBalance(this.getBalance() - amount);
+		}
+	}
 }

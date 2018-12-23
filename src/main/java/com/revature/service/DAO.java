@@ -10,9 +10,8 @@ import com.revature.entity.BankAccount;
 import com.revature.entity.BankAccountBuilder;
 
 public class DAO {
-	
+
 	double balance;
-	int accountNumber;
 
 	public void setCustomerDBValues(Connection connection, String firstName, String lastName, String username,
 			String password) {
@@ -27,47 +26,38 @@ public class DAO {
 		}
 	}
 
-	public void setCheckingDBValues(Connection connection, String username, int accountNumber, String accountstatus) {
+	public void setCheckingDBValues(Connection connection, String username, String accountstatus) {
 		try {
 			Statement statement = connection.createStatement();
 			String insert = "insert into checkingaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, accountNumber, username,
-					accountstatus);
+			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, username, accountstatus);
 			statement.executeUpdate(insert + values);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		AccountCreationMenu.accountNumber++;
 	}
 
-	public void setSavingsDBValues(Connection connection, String username, int accountNumber, String accountstatus) {
+	public void setSavingsDBValues(Connection connection, String username, String accountstatus) {
 		try {
 			Statement statement = connection.createStatement();
 			String insert = "insert into savingsaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, accountNumber, username,
+			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, username, accountstatus);
+			statement.executeUpdate(insert + values);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setJointDBValues(Connection connection, String username, String username2, String accountstatus) {
+		try {
+			Statement statement = connection.createStatement();
+			String insert = "insert into jointaccount ";
+			String values = String.format("values ('%f', '%d', '%s', '%s', '%s')", 0.00, username, username2,
 					accountstatus);
 			statement.executeUpdate(insert + values);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		AccountCreationMenu.accountNumber++;
-	}
-
-	public void setJointDBValues(Connection connection, String username, String username2, int accountNumber,
-			String accountstatus) {
-		try {
-			Statement statement = connection.createStatement();
-			String insert = "insert into jointaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s', '%s')", 0.00, accountNumber, username,
-					username2, accountstatus);
-			statement.executeUpdate(insert + values);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		AccountCreationMenu.accountNumber++;
 	}
 
 	public boolean checkCustomerLogin(Connection connection, String username, String password) {
@@ -141,7 +131,7 @@ public class DAO {
 				if (rs.getInt(15) == 0 || rs.getString(18).equals("Not Active")) {
 					System.out.println("Joint Account: N/A");
 				} else if (rs.getString(18).equals("Pending")) {
-					
+
 				} else {
 					System.out.println("Joint Account Number: " + rs.getInt(15));
 					System.out.printf("Joint Account Balance: $%.2f\n", rs.getDouble(14));
@@ -171,7 +161,8 @@ public class DAO {
 		return true;
 	}
 
-	public void depositFunds(Connection connection, String username, double amount, String accountChoice, Scanner input) {
+	public void depositFunds(Connection connection, String username, double amount, String accountChoice,
+			Scanner input) {
 		if (accountChoice.contains("checking")) {
 			accountChoice = "checkingaccount";
 		} else if (accountChoice.contains("savings")) {
@@ -186,24 +177,23 @@ public class DAO {
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
 				balance = rs.getDouble(1);
-				accountNumber = rs.getInt(2);
 			}
 
 			BankAccount ba = new BankAccountBuilder().with($ -> {
 				$.balance = balance;
-				$.accountNumber = accountNumber;
 				$.username = username;
 			}).buildBankAccount();
-			
+
 			boolean z = ba.deposit(amount);
 			while (z) {
 				z = ba.deposit(input.nextDouble());
 			}
 			balance = ba.getBalance();
-			
-			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance, username);
+
+			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance,
+					username);
 			statement.executeUpdate(update);
-			
+
 			System.out.println("Deposit Successful!");
 			System.out.printf("New balance = %.2f\n", balance);
 		} catch (SQLException e) {
@@ -243,7 +233,8 @@ public class DAO {
 		return result;
 	}
 
-	public void withdrawFunds(Connection connection, String username, double amount, String accountChoice, Scanner input) {
+	public void withdrawFunds(Connection connection, String username, double amount, String accountChoice,
+			Scanner input) {
 		if (accountChoice.contains("checking")) {
 			accountChoice = "checkingaccount";
 		} else if (accountChoice.contains("savings")) {
@@ -258,15 +249,13 @@ public class DAO {
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
 				balance = rs.getDouble(1);
-				accountNumber = rs.getInt(2);
 			}
 
 			BankAccount ba = new BankAccountBuilder().with($ -> {
 				$.balance = balance;
-				$.accountNumber = accountNumber;
 				$.username = username;
 			}).buildBankAccount();
-			
+
 			boolean z = ba.withdraw(amount);
 			while (z) {
 				z = ba.withdraw(input.nextDouble());
@@ -274,14 +263,35 @@ public class DAO {
 			}
 			balance = ba.getBalance();
 			System.out.println();
-			
-			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance, username);
+
+			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance,
+					username);
 			statement.executeUpdate(update);
-			
+
 			System.out.println("Withdraw Successful!");
 			System.out.printf("New balance = %.2f\n", balance);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+//
+//	public boolean exists(Connection connection, int accountNumber) {
+//		try {
+//			Statement statement = connection.createStatement();
+//			String sql = String.format("select accountnumber from customer where username = '%s'", username);
+//			ResultSet rs = statement.executeQuery(sql);
+//			while (rs.next()) {
+//				if (rs.getString(1).equals(username)) {
+//					System.out.println();
+//					System.out.println("Username already in use!");
+//					System.out.println();
+//					return false;
+//				}
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//
+//		return false;
+//	}
 }
