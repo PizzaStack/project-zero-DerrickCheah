@@ -27,6 +27,7 @@ public class CustomerLoginMenu {
 				new CustomerMenu(input, connection, this.username);
 				loop = false;
 			} else {
+				System.out.println();
 				System.out.println("Incorrect username or password.");
 				System.out.println();
 			}

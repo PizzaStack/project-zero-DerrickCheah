@@ -56,15 +56,15 @@ public class AccountCreationMenu {
 				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else if (choice.equals("2") || choice.contains("savings")) {
 				b = false;
-				dao.setSavingsDBValues(connection, this.username, "Pending");
 				dao.setCheckingDBValues(connection, this.username, "Not Active");
+				dao.setSavingsDBValues(connection, this.username, "Pending");
 				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else if (choice.equals("3") || choice.contains("joint")) {
 				// Enter information for second user
 				b = false;
-				dao.setJointDBValues(connection, this.username, this.username2, "Pending");
 				dao.setCheckingDBValues(connection, this.username, "Not Active");
 				dao.setSavingsDBValues(connection, this.username, "Not Active");
+				dao.setJointDBValues(connection, this.username, this.username2, "Pending");
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);

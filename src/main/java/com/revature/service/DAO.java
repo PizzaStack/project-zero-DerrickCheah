@@ -12,6 +12,7 @@ import com.revature.entity.BankAccountBuilder;
 public class DAO {
 
 	double balance;
+	int count;
 
 	public void setCustomerDBValues(Connection connection, String firstName, String lastName, String username,
 			String password) {
@@ -29,8 +30,13 @@ public class DAO {
 	public void setCheckingDBValues(Connection connection, String username, String accountstatus) {
 		try {
 			Statement statement = connection.createStatement();
+			statement.executeUpdate("insert into counter values(default)");
+			ResultSet rs = statement.executeQuery("select * from counter");
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
 			String insert = "insert into checkingaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, username, accountstatus);
+			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, count, username, accountstatus);
 			statement.executeUpdate(insert + values);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -40,8 +46,13 @@ public class DAO {
 	public void setSavingsDBValues(Connection connection, String username, String accountstatus) {
 		try {
 			Statement statement = connection.createStatement();
+			statement.executeUpdate("insert into counter values(default)");
+			ResultSet rs = statement.executeQuery("select * from counter");
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
 			String insert = "insert into savingsaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, username, accountstatus);
+			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, count, username, accountstatus);
 			statement.executeUpdate(insert + values);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -51,8 +62,13 @@ public class DAO {
 	public void setJointDBValues(Connection connection, String username, String username2, String accountstatus) {
 		try {
 			Statement statement = connection.createStatement();
+			statement.executeUpdate("insert into counter values(default)");
+			ResultSet rs = statement.executeQuery("select * from counter");
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
 			String insert = "insert into jointaccount ";
-			String values = String.format("values ('%f', '%d', '%s', '%s', '%s')", 0.00, username, username2,
+			String values = String.format("values ('%f', '%d', '%s', '%s', '%s')", 0.00, count, username, username2,
 					accountstatus);
 			statement.executeUpdate(insert + values);
 		} catch (SQLException e) {
@@ -106,7 +122,7 @@ public class DAO {
 				System.out.println("Username: " + rs.getString(3));
 				System.out.println();
 
-				if (rs.getInt(7) == 0 || rs.getString(9).equals("Not Active") || rs.getString(9).equals("Pending")) {
+				if (rs.getInt(7) == 0 || rs.getString(9).equals("Not Active")) {
 					System.out.println("Checking Account: N/A");
 				} else if (rs.getString(9).equals("Pending")) {
 					System.out.println("Checking Account: Pending");
