@@ -290,24 +290,28 @@ public class DAO {
 			e.printStackTrace();
 		}
 	}
-//
-//	public boolean exists(Connection connection, int accountNumber) {
-//		try {
-//			Statement statement = connection.createStatement();
-//			String sql = String.format("select accountnumber from customer where username = '%s'", username);
-//			ResultSet rs = statement.executeQuery(sql);
-//			while (rs.next()) {
-//				if (rs.getString(1).equals(username)) {
-//					System.out.println();
-//					System.out.println("Username already in use!");
-//					System.out.println();
-//					return false;
-//				}
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//
-//		return false;
-//	}
+
+	public boolean exists(Connection connection, int accountNumber) {
+		try {
+			Statement statement = connection.createStatement();
+			String select = "select * from checkingaccount ";
+			String join1 = "left outer join savingsaccount on checkingaccount.username = savingsaccount.username ";
+			String join2 = "left outer join jointaccount on checkingaccount.username = jointaccount.username ";
+			ResultSet rs = statement.executeQuery(select + join1 + join2);
+			String sql = String.format("select accountnumber from customer where username = '%s'", username);
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				if (rs.getString(1).equals(username)) {
+					System.out.println();
+					System.out.println("Username already in use!");
+					System.out.println();
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
 }
