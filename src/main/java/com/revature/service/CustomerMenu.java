@@ -89,19 +89,24 @@ public class CustomerMenu {
 					b = false;
 
 				} else if (choice.equals("4") || choice.contains("transfer")) {
-					System.out.println("Select the account you would like to transfer to.");
+					System.out.println("Enter the account you would like to transfer from.");
 					String accounts = dao.getActiveAccounts(connection, username);
 					readAccounts = new Scanner(accounts);
+					int counter = 0;
 					while (readAccounts.hasNext()) {
 						System.out.println("\t" + readAccounts.next());
+						counter++;
 					}
-					System.out.println("\tAnother Account");
+					if (counter == 0) {
+						System.out.println("\tNo active accounts!");
+						break;
+					}
 					String accountChoice = input.next();
 					accountChoice = accountChoice.toLowerCase();
 					boolean c = true;
 					while (c) {
 						if (accountChoice.contains("checking") || accountChoice.contains("savings")
-								|| accountChoice.contains("joint") || accountChoice.contains("another")) {
+								|| accountChoice.contains("joint")) {
 							c = false;
 						} else {
 							System.out.print("Please enter a valid account: ");
@@ -109,17 +114,21 @@ public class CustomerMenu {
 							System.out.println();
 						}
 					}
-					if (accountChoice.contains("another")) {
-						System.out.print("Enter the account number you would like to transfer to: ");
+
+					System.out.print("Enter the account number you would like to transfer to: ");
+					int accountNumber = input.nextInt();
+					System.out.println();
+					boolean exists = dao.exists(connection, accountNumber);
+					while (!exists) {
+						System.out.print("Account does not exist! Please enter a valid account number: ");
+						accountNumber = input.nextInt();
 						System.out.println();
-						String accountNumber = input.next();
-						// TODO
-						// Check existing account
+						exists = dao.exists(connection, accountNumber);
 					}
 					System.out.print("Enter the transfer amount: ");
 					double amount = input.nextDouble();
 					System.out.println();
-					dao.depositFunds(connection, username, amount, accountChoice, input);
+					dao.transferFunds(connection, username, amount, accountChoice, accountNumber, input);
 					b = false;
 
 				} else if (choice.equals("5") || choice.contains("apply")) {

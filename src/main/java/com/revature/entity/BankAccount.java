@@ -47,12 +47,14 @@ public class BankAccount {
 		return true;
 	}
 
-	public void transfer(BankAccount other, double amount) {
+	public boolean transfer(BankAccount other, double amount) {
 		if (this.getBalance() < amount || amount < 0) {
 			System.out.print("Insufficient Funds. Please enter a valid amount: ");
 		} else {
 			other.setBalance(other.getBalance() + amount);
 			this.setBalance(this.getBalance() - amount);
+			return false;
 		}
+		return true;
 	}
 }

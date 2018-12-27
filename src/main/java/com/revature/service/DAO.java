@@ -11,6 +11,7 @@ import com.revature.entity.BankAccountBuilder;
 
 public class DAO {
 
+	String username;
 	double balance;
 	int count;
 
@@ -261,14 +262,13 @@ public class DAO {
 		try {
 			Statement statement = connection.createStatement();
 			String sql = String.format("select * from %s where username = '%s'", accountChoice, username);
-			ResultSet rs;
-			rs = statement.executeQuery(sql);
+			ResultSet rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				balance = rs.getDouble(1);
+				this.balance = rs.getDouble(1);
 			}
 
 			BankAccount ba = new BankAccountBuilder().with($ -> {
-				$.balance = balance;
+				$.balance = this.balance;
 				$.username = username;
 			}).buildBankAccount();
 
@@ -277,15 +277,15 @@ public class DAO {
 				z = ba.withdraw(input.nextDouble());
 				System.out.println();
 			}
-			balance = ba.getBalance();
+			this.balance = ba.getBalance();
 			System.out.println();
 
-			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance,
-					username);
+			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
+					this.balance, username);
 			statement.executeUpdate(update);
 
 			System.out.println("Withdraw Successful!");
-			System.out.printf("New balance = %.2f\n", balance);
+			System.out.printf("New balance = %.2f\n", this.balance);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -298,14 +298,28 @@ public class DAO {
 			String join1 = "left outer join savingsaccount on checkingaccount.username = savingsaccount.username ";
 			String join2 = "left outer join jointaccount on checkingaccount.username = jointaccount.username ";
 			ResultSet rs = statement.executeQuery(select + join1 + join2);
-			String sql = String.format("select accountnumber from customer where username = '%s'", username);
-			ResultSet rs = statement.executeQuery(sql);
 			while (rs.next()) {
-				if (rs.getString(1).equals(username)) {
-					System.out.println();
-					System.out.println("Username already in use!");
-					System.out.println();
-					return false;
+				if (rs.getInt(2) == accountNumber) {
+					if (rs.getString(4).equals("Active")) {
+						return true;
+					} else {
+						System.out.println("Account not active.");
+						return false;
+					}
+				} else if (rs.getInt(6) == accountNumber) {
+					if (rs.getString(8).equals("Active")) {
+						return true;
+					} else {
+						System.out.println("Account not active.");
+						return false;
+					}
+				} else if (rs.getInt(10) == accountNumber) {
+					if (rs.getString(13).equals("Active")) {
+						return true;
+					} else {
+						System.out.println("Account not active.");
+						return false;
+					}
 				}
 			}
 		} catch (SQLException e) {
@@ -313,5 +327,163 @@ public class DAO {
 		}
 
 		return false;
+	}
+
+	public void transferFunds(Connection connection, String username, double amount, String accountChoice,
+			int otherAccount, Scanner input) {
+		if (accountChoice.contains("checking")) {
+			accountChoice = "checkingaccount";
+		} else if (accountChoice.contains("savings")) {
+			accountChoice = "savingsaccount";
+		} else if (accountChoice.contains("joint")) {
+			accountChoice = "jointaccount";
+		}
+		try {
+			Statement statement = connection.createStatement();
+			String sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				this.balance = rs.getDouble(1);
+			}
+
+			BankAccount ba = new BankAccountBuilder().with($ -> {
+				$.balance = this.balance;
+				$.username = username;
+			}).buildBankAccount();
+
+			String sql1 = String.format("select balance, username from checkingaccount where accountnumber = '%d'",
+					otherAccount);
+			String sql2 = String.format(
+					" union select balance, username from savingsaccount where accountnumber = '%d'", otherAccount);
+			String sql3 = String.format(" union select balance, username from jointaccount where accountnumber = '%d'",
+					otherAccount);
+			rs = statement.executeQuery(sql1 + sql2 + sql3);
+			while (rs.next()) {
+				this.balance = rs.getDouble(1);
+				this.username = rs.getString(2);
+			}
+
+			BankAccount otherBa = new BankAccountBuilder().with($ -> {
+				$.balance = this.balance;
+				$.username = this.username;
+			}).buildBankAccount();
+
+			boolean z = ba.transfer(otherBa, amount);
+			while (z) {
+				z = ba.transfer(otherBa, input.nextDouble());
+				System.out.println();
+			}
+
+			this.balance = otherBa.getBalance();
+
+			String update = String.format("update checkingaccount set balance = %.2f where accountnumber = '%d'",
+					this.balance, otherAccount);
+			statement.executeUpdate(update);
+
+			update = String.format("update savingsaccount set balance = %.2f where accountnumber = '%d'", this.balance,
+					otherAccount);
+			statement.executeUpdate(update);
+
+			update = String.format("update jointaccount set balance = %.2f where accountnumber = '%d'", this.balance,
+					otherAccount);
+			statement.executeUpdate(update);
+
+			this.balance = ba.getBalance();
+
+			update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, this.balance,
+					username);
+			statement.executeUpdate(update);
+
+			System.out.println();
+			System.out.println("Transfer Successful!");
+			System.out.printf("New balance = %.2f\n", this.balance);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getUsername(Connection connection, int accountNumber) {
+		try {
+			Statement statement = connection.createStatement();
+			String sql1 = String.format("select username from checkingaccount where accountnumber = '%d'",
+					accountNumber);
+			String sql2 = String.format(" union select username from savingsaccount where accountnumber = '%d'",
+					accountNumber);
+			String sql3 = String.format(" union select username from jointaccount where accountnumber = '%d'",
+					accountNumber);
+			ResultSet rs = statement.executeQuery(sql1 + sql2 + sql3);
+			while (rs.next()) {
+				return rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public boolean isAdmin(Connection connection, String username) {
+		try {
+			Statement statement = connection.createStatement();
+			String sql = String.format("select admin from employee where username = '%s'", username);
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				return rs.getBoolean(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	public String getAccountType(Connection connection, int accountNumber) {
+		try {
+			Statement statement = connection.createStatement();
+			String sql1 = String.format("select accountnumber from checkingaccount where accountnumber = '%d'",
+					accountNumber);
+			ResultSet rs = statement.executeQuery(sql1);
+			while (rs.next()) {
+				if (rs.getInt(1) == accountNumber) {
+					return "checkingaccount";
+				}
+			}
+			String sql2 = String.format("select accountnumber from savingsaccount where accountnumber = '%d'",
+					accountNumber);
+			rs = statement.executeQuery(sql2);
+			while (rs.next()) {
+				if (rs.getInt(1) == accountNumber) {
+					return "savingsaccount";
+				}
+			}
+			String sql3 = String.format("select accountnumber from jointaccount where accountnumber = '%d'",
+					accountNumber);
+			rs = statement.executeQuery(sql3);
+			while (rs.next()) {
+				if (rs.getInt(1) == accountNumber) {
+					return "jointaccount";
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public void getPending(Connection connection) {
+		try {
+			Statement statement = connection.createStatement();
+			String sql = "select pending, username from customer";
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				if (rs.getBoolean(1)) {
+					System.out.println("\t" + rs.getString(2));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

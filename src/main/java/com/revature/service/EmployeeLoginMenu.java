@@ -24,6 +24,7 @@ public class EmployeeLoginMenu {
 			if (login) {
 				System.out.println("Login Successful!");
 				System.out.println();
+				new EmployeeMenu(input, connection, this.username);
 				loop = false;
 			} else {
 				System.out.println("Incorrect username or password.");
