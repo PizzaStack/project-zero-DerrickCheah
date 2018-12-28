@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import org.apache.log4j.Logger;
+
+import com.revature.App;
 import com.revature.entity.BankAccount;
 import com.revature.entity.BankAccountBuilder;
 
@@ -14,15 +17,16 @@ public class DAO {
 	String username;
 	double balance;
 	int count;
+	static final Logger log = Logger.getLogger(App.class);
 
 	public void setCustomerDBValues(Connection connection, String firstName, String lastName, String username,
 			String password) {
 		try {
 			Statement statement = connection.createStatement();
 			String insert = "insert into customer ";
-			String values = String.format("values ('%s', '%s', '%s', '%s', %b)", firstName, lastName, username,
-					password, true);
+			String values = String.format("values ('%s', '%s', '%s', '%s')", firstName, lastName, username, password);
 			statement.executeUpdate(insert + values);
+			log.info("Created new user: " + firstName + " " + lastName + "\n\t\t\t\t\t\t\t\t\tUsername: " + username);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -39,6 +43,9 @@ public class DAO {
 			String insert = "insert into checkingaccount ";
 			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, count, username, accountstatus);
 			statement.executeUpdate(insert + values);
+			log.info("Set Checking Account Database Values for Username: " + username
+					+ "\n\t\t\t\t\t\t\t\t\tBalance: $0.00 \n\t\t\t\t\t\t\t\t\tAccount Number: " + count
+					+ "\n\t\t\t\t\t\t\t\t\tAccount Status: " + accountstatus);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -55,6 +62,9 @@ public class DAO {
 			String insert = "insert into savingsaccount ";
 			String values = String.format("values ('%f', '%d', '%s', '%s')", 0.00, count, username, accountstatus);
 			statement.executeUpdate(insert + values);
+			log.info("Set Savings Account Database Values for Username: " + username
+					+ "\n\t\t\t\t\t\t\t\t\tBalance: $0.00 \n\t\t\t\t\t\t\t\t\tAccount Number: " + count
+					+ "\n\t\t\t\t\t\t\t\t\tAccount Status: " + accountstatus);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -72,6 +82,9 @@ public class DAO {
 			String values = String.format("values ('%f', '%d', '%s', '%s', '%s')", 0.00, count, username, username2,
 					accountstatus);
 			statement.executeUpdate(insert + values);
+			log.info("Set Joint Account Database Values for Username: " + username + "\n\t\t\t\t\t\t\t\t\tUsername2: "
+					+ username2 + "\n\t\t\t\t\t\t\t\t\tBalance: $0.00 \n\t\t\t\t\t\t\t\t\tAccount Number: " + count
+					+ "\n\t\t\t\t\t\t\t\t\tAccount Status: " + accountstatus);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -84,12 +97,14 @@ public class DAO {
 					String.format("select username, password from customer where username = '%s'", username));
 			while (rs.next()) {
 				if (rs.getString(2).equals(password)) {
+					log.info("Login successful. Username: " + username);
 					return true;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		log.info("Login failed. Username: " + username);
 		return false;
 	}
 
@@ -100,12 +115,14 @@ public class DAO {
 					String.format("select username, password from employee where username = '%s'", username));
 			while (rs.next()) {
 				if (rs.getString(2).equals(password)) {
+					log.info("Login successful. Username: " + username);
 					return true;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		log.info("Login failed. Username: " + username);
 		return false;
 	}
 
@@ -153,6 +170,8 @@ public class DAO {
 					System.out.println("Joint Account Number: " + rs.getInt(14));
 					System.out.printf("Joint Account Balance: $%.2f\n", rs.getDouble(13));
 				}
+
+				log.info("Returned Account Information. Username: " + username);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -169,6 +188,7 @@ public class DAO {
 					System.out.println();
 					System.out.println("Username already in use!");
 					System.out.println();
+					log.info("User entered an existing username.");
 					return false;
 				}
 			}
@@ -225,6 +245,7 @@ public class DAO {
 
 			System.out.println("Deposit Successful!");
 			System.out.printf("New balance = %.2f\n", balance);
+			log.info(username + " deposited " + amount + " into " + accountChoice);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -260,7 +281,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		log.info("Returned Active Accounts.");
 		return result;
 	}
 
@@ -311,6 +332,7 @@ public class DAO {
 
 			System.out.println("Withdraw Successful!");
 			System.out.printf("New balance = %.2f\n", this.balance);
+			log.info(username + " withdrew " + amount + " from " + accountChoice);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -433,6 +455,7 @@ public class DAO {
 
 			System.out.println("Transfer Successful!");
 			System.out.printf("New balance = %.2f\n", this.balance);
+			log.info(username + " transferred " + amount + " to account number " + otherAccount);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -564,8 +587,10 @@ public class DAO {
 	public void approveOrDeny(Connection connection, int accountNumber, String approveOrDeny) {
 		String accountStatus = "";
 		if (approveOrDeny.contains("approve")) {
+			log.info("Approved account number " + accountNumber);
 			accountStatus = "Active";
 		} else if (approveOrDeny.contains("deny")) {
+			log.info("Denied account number " + accountNumber);
 			accountStatus = "Not Active";
 		}
 
@@ -597,12 +622,14 @@ public class DAO {
 						"update %s set accountstatus = 'Not Active', balance = '%.2f' where username = '%s' or username2 = '%s'",
 						accountType, 0.00, customerUsername, customerUsername);
 			} else {
-				sql = String.format("update %s set accountstatus = 'Not Active', balance = '%.2f' where username = '%s'",
+				sql = String.format(
+						"update %s set accountstatus = 'Not Active', balance = '%.2f' where username = '%s'",
 						accountType, 0.00, customerUsername);
 			}
 			statement.executeUpdate(sql);
 			System.out.println();
 			System.out.println("Cancel Success!");
+			log.info("Cancelled " + accountType + " for " + customerUsername);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -619,10 +646,10 @@ public class DAO {
 			String sql = String.format("update %s set accountstatus = 'Pending' where username = '%s'", accountChoice,
 					username);
 			statement.executeUpdate(sql);
+			log.info("Created " + accountChoice + " application for " + username);
 			System.out.println("Application Successful! Check back later.");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
 }

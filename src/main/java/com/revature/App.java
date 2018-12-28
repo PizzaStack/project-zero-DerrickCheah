@@ -1,7 +1,10 @@
 package com.revature;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.Scanner;
+
+import org.apache.log4j.PropertyConfigurator;
 
 import com.revature.service.AccountCreationMenu;
 import com.revature.service.CreateConnection;
@@ -10,6 +13,9 @@ import com.revature.service.EmployeeLoginMenu;
 
 public class App {
 	public static void main(String[] args) {
+
+		PropertyConfigurator.configure(
+				System.getProperty("user.dir") + File.separator + "\\src\\main\\resources\\log4j.properties");
 
 		CreateConnection createConnection = new CreateConnection();
 		Connection connection = createConnection.getConnection();
