@@ -26,7 +26,7 @@ public class EmployeeMenu {
 					System.out.println();
 					boolean exists = dao.exists(connection, accountNumber);
 					while (!exists) {
-						System.out.print("Account does not exist! Please enter a valid account number: ");
+						System.out.print("Please enter a valid account number: ");
 						accountNumber = input.nextInt();
 						System.out.println();
 						exists = dao.exists(connection, accountNumber);
@@ -67,7 +67,7 @@ public class EmployeeMenu {
 						System.out.println();
 						boolean exists = dao.exists(connection, accountNumber);
 						while (!exists) {
-							System.out.print("Account does not exist! Please enter a valid account number: ");
+							System.out.print("Please enter a valid account number: ");
 							accountNumber = input.nextInt();
 							System.out.println();
 							exists = dao.exists(connection, accountNumber);
@@ -91,7 +91,7 @@ public class EmployeeMenu {
 						System.out.println();
 						boolean exists = dao.exists(connection, accountNumber);
 						while (!exists) {
-							System.out.print("Account does not exist! Please enter a valid account number: ");
+							System.out.print("Please enter a valid account number: ");
 							accountNumber = input.nextInt();
 							System.out.println();
 							exists = dao.exists(connection, accountNumber);
@@ -99,13 +99,13 @@ public class EmployeeMenu {
 
 						String customerUsername = dao.getUsername(connection, accountNumber);
 						String accountType = dao.getAccountType(connection, accountNumber);
-						
+
 						System.out.print("Enter the account number you would like to transfer to: ");
 						int accountNumberTo = input.nextInt();
 						System.out.println();
 						exists = dao.exists(connection, accountNumberTo);
 						while (!exists) {
-							System.out.print("Account does not exist! Please enter a valid account number: ");
+							System.out.print("Please enter a valid account number: ");
 							accountNumberTo = input.nextInt();
 							System.out.println();
 							exists = dao.exists(connection, accountNumberTo);
@@ -120,9 +120,51 @@ public class EmployeeMenu {
 					b = false;
 
 				} else if (choice.equals("5") || choice.contains("approve")) {
+					dao.getPending(connection);
+					System.out.println();
+					System.out.print("Please enter the account you would like to approve or deny: ");
+					int accountNumber = input.nextInt();
+					String customerUsername = dao.getUsername(connection, accountNumber);
+					dao.getAccountInformation(connection, customerUsername);
+					System.out.println();
+					System.out.print("Would you like to approve or deny? ");
+					String approveOrDeny = input.next();
+					approveOrDeny = approveOrDeny.toLowerCase();
+					System.out.println();
+					boolean a = true;
+					while (a) {
+						if (approveOrDeny.equals("approve") || approveOrDeny.contains("deny")) {
+							a = false;
+						} else {
+							System.out.print("Invalid input. Would you like to approve or deny? ");
+							approveOrDeny = input.next();
+							approveOrDeny = approveOrDeny.toLowerCase();
+							System.out.println();
+						}
+					}
+
+					dao.approveOrDeny(connection, accountNumber, approveOrDeny);
 					b = false;
 
 				} else if (choice.equals("6") || choice.contains("cancel")) {
+					if (dao.isAdmin(connection, username)) {
+						System.out.print("Please enter customer's account number: ");
+						int accountNumber = input.nextInt();
+						System.out.println();
+						boolean exists = dao.exists(connection, accountNumber);
+						while (!exists) {
+							System.out.print("Please enter a valid account number: ");
+							accountNumber = input.nextInt();
+							System.out.println();
+							exists = dao.exists(connection, accountNumber);
+						}
+
+						String customerUsername = dao.getUsername(connection, accountNumber);
+						String accountType = dao.getAccountType(connection, accountNumber);
+						dao.cancelAccount(connection, customerUsername, accountType, input);
+					} else {
+						System.out.println("You do not have admin privileges. Please contact a bank admin.");
+					}
 					b = false;
 
 				} else if (choice.equals("7") || choice.contains("return")) {

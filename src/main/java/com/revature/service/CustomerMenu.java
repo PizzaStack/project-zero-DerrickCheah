@@ -120,7 +120,7 @@ public class CustomerMenu {
 					System.out.println();
 					boolean exists = dao.exists(connection, accountNumber);
 					while (!exists) {
-						System.out.print("Account does not exist! Please enter a valid account number: ");
+						System.out.print("Please enter a valid account number: ");
 						accountNumber = input.nextInt();
 						System.out.println();
 						exists = dao.exists(connection, accountNumber);
@@ -132,6 +132,48 @@ public class CustomerMenu {
 					b = false;
 
 				} else if (choice.equals("5") || choice.contains("apply")) {
+					System.out.print("What type of account would you like to apply for: ");
+					String accountChoice = input.next();
+					accountChoice = accountChoice.toLowerCase();
+					System.out.println();
+					boolean c = true;
+					while (c) {
+						if (accountChoice.contains("checking") || accountChoice.contains("savings")
+								|| accountChoice.contains("joint")) {
+							String activeCheck = dao.getActiveAccounts(connection, username);
+							activeCheck = activeCheck.toLowerCase();
+							if (activeCheck.contains(accountChoice)) {
+								System.out.println("Account Type Already Active!");
+								System.out.print("Please select a different account type: ");
+								accountChoice = input.next();
+								accountChoice = accountChoice.toLowerCase();
+								System.out.println();
+							} else {
+								c = false;
+							}
+						} else {
+							System.out.print("Please enter a valid account: ");
+							accountChoice = input.next();
+							System.out.println();
+						}
+					}
+
+					if (accountChoice.contains("joint")) {
+						System.out.print("Please enter the account number you want to join with: ");
+						int accountNumber = input.nextInt();
+						System.out.println();
+						boolean exists = dao.exists(connection, accountNumber);
+						while (!exists) {
+							System.out.print("Please enter a valid account number: ");
+							accountNumber = input.nextInt();
+							System.out.println();
+							exists = dao.exists(connection, accountNumber);
+						}
+						String username2 = dao.getUsername(connection, accountNumber);
+						dao.applyJoint(connection, username, username2);
+					} else {
+						dao.apply(connection, username, accountChoice);
+					}
 					b = false;
 
 				} else if (choice.equals("6") || choice.contains("return")) {

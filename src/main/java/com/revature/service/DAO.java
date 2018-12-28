@@ -278,7 +278,6 @@ public class DAO {
 				System.out.println();
 			}
 			this.balance = ba.getBalance();
-			System.out.println();
 
 			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
 					this.balance, username);
@@ -394,7 +393,6 @@ public class DAO {
 					username);
 			statement.executeUpdate(update);
 
-			System.out.println();
 			System.out.println("Transfer Successful!");
 			System.out.printf("New balance = %.2f\n", this.balance);
 
@@ -473,17 +471,139 @@ public class DAO {
 	}
 
 	public void getPending(Connection connection) {
+		int count = 0;
 		try {
 			Statement statement = connection.createStatement();
-			String sql = "select pending, username from customer";
+			String sql = "select accountnumber, accountstatus from checkingaccount";
 			ResultSet rs = statement.executeQuery(sql);
+			System.out.println("Pending Checking Accounts");
 			while (rs.next()) {
-				if (rs.getBoolean(1)) {
-					System.out.println("\t" + rs.getString(2));
+				if (rs.getString(2).equals("Pending")) {
+					System.out.println("\t" + rs.getInt(1));
+					count++;
 				}
 			}
+
+			if (count == 0) {
+				System.out.println("\tNo Pending Accounts");
+			}
+
+			count = 0;
+			sql = "select accountnumber, accountstatus from savingsaccount";
+			rs = statement.executeQuery(sql);
+			System.out.println("Pending Savings Accounts");
+			while (rs.next()) {
+				if (rs.getString(2).equals("Pending")) {
+					System.out.println("\t" + rs.getInt(1));
+					count++;
+				}
+			}
+
+			if (count == 0) {
+				System.out.println("\tNo Pending Accounts");
+			}
+
+			count = 0;
+			sql = "select accountnumber, accountstatus from jointaccount";
+			rs = statement.executeQuery(sql);
+			System.out.println("Pending Joint Accounts");
+			while (rs.next()) {
+				if (rs.getString(2).equals("Pending")) {
+					System.out.println("\t" + rs.getInt(1));
+					count++;
+				}
+			}
+
+			if (count == 0) {
+				System.out.println("\tNo Pending Accounts");
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void approveOrDeny(Connection connection, int accountNumber, String approveOrDeny) {
+		String accountStatus = "";
+		if (approveOrDeny.contains("approve")) {
+			accountStatus = "Active";
+		} else if (approveOrDeny.contains("deny")) {
+			accountStatus = "Not Active";
+		}
+
+		try {
+			Statement statement = connection.createStatement();
+			String accountType = getAccountType(connection, accountNumber);
+			String sql = String.format("update %s set accountstatus = '%s' where accountnumber = '%d'", accountType,
+					accountStatus, accountNumber);
+			statement.executeUpdate(sql);
+			System.out.println("Update Successful!");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void cancelAccount(Connection connection, String customerUsername, String accountType, Scanner input) {
+		System.out.print("Confirm cancellation: ");
+		String confirm = input.next();
+		confirm = confirm.toLowerCase();
+		if (!confirm.contains("confirm")) {
+			return;
+		}
+		try {
+			Statement statement = connection.createStatement();
+			String sql = String.format("update %s set accountstatus = 'Not Active' where username = '%s'", accountType,
+					customerUsername);
+			statement.executeUpdate(sql);
+			System.out.println();
+			System.out.println("Cancel Success!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void apply(Connection connection, String username, String accountChoice) {
+		if (accountChoice.contains("checking")) {
+			accountChoice = "checkingaccount";
+		} else if (accountChoice.contains("savings")) {
+			accountChoice = "savingsaccount";
+		}
+		try {
+			Statement statement = connection.createStatement();
+			String sql = String.format("update %s set accountstatus = 'Pending' where username = '%s'", accountChoice,
+					username);
+			statement.executeUpdate(sql);
+			System.out.println("Application Successful! Check back later.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void applyJoint(Connection connection, String username, String username2) {
+		try {
+			Statement statement = connection.createStatement();
+			String select = String.format("select accountnumber from jointaccount where username = '%s'", username);
+			ResultSet rs = statement.executeQuery(select);
+			int accountNumber = 0;
+			while (rs.next()) {
+				accountNumber = rs.getInt(1);
+			}
+
+			String sql = String.format(
+					"update jointaccount set username2 = '%s', accountstatus = 'Pending' where username = '%s'",
+					username2, username);
+			statement.executeUpdate(sql);
+			sql = String.format(
+					"update jointaccount set username2 = '%s', accountnumber = %d, accountstatus = 'Pending' where username = '%s'",
+					username, accountNumber, username2);
+			statement.executeUpdate(sql);
+			
+			System.out.println("Application Successful! Please check back later.");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class AccountCreationMenu {
 
 	private String username;
-	private String username2;
 	private String password;
 	private String firstName;
 	private String lastName;
@@ -41,7 +40,7 @@ public class AccountCreationMenu {
 		dao.setCustomerDBValues(connection, this.firstName, this.lastName, this.username, this.password);
 
 		System.out.println("What type of account would you like to create?");
-		System.out.println("\t1. Checking Account\n\t2. Savings Account\n\t3. Joint Account");
+		System.out.println("\t1. Checking Account\n\t2. Savings Account");
 
 		String choice = input.next();
 		choice = choice.toLowerCase();
@@ -59,12 +58,6 @@ public class AccountCreationMenu {
 				dao.setCheckingDBValues(connection, this.username, "Not Active");
 				dao.setSavingsDBValues(connection, this.username, "Pending");
 				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
-			} else if (choice.equals("3") || choice.contains("joint")) {
-				// Enter information for second user
-				b = false;
-				dao.setCheckingDBValues(connection, this.username, "Not Active");
-				dao.setSavingsDBValues(connection, this.username, "Not Active");
-				dao.setJointDBValues(connection, this.username, this.username2, "Pending");
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);
