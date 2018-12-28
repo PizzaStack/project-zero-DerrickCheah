@@ -170,10 +170,12 @@ public class CustomerMenu {
 							exists = dao.exists(connection, accountNumber);
 						}
 						String username2 = dao.getUsername(connection, accountNumber);
-						dao.applyJoint(connection, username, username2);
+						dao.setJointDBValues(connection, username, username2, "Pending");
+						System.out.println("Application Successful! Please check back later.");
 					} else {
 						dao.apply(connection, username, accountChoice);
 					}
+					
 					b = false;
 
 				} else if (choice.equals("6") || choice.contains("return")) {

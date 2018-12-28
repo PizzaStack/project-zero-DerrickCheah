@@ -115,7 +115,7 @@ public class DAO {
 			String select = "select * from customer ";
 			String join1 = "left outer join checkingaccount on customer.username = checkingaccount.username ";
 			String join2 = "left outer join savingsaccount on customer.username = savingsaccount.username ";
-			String join3 = "left outer join jointaccount on customer.username = jointaccount.username ";
+			String join3 = "left outer join jointaccount on customer.username = jointaccount.username or customer.username = jointaccount.username2 ";
 			String condition = String.format("where customer.username = '%s'", username);
 			ResultSet rs = statement.executeQuery(select + join1 + join2 + join3 + condition);
 			while (rs.next()) {
@@ -123,35 +123,35 @@ public class DAO {
 				System.out.println("Username: " + rs.getString(3));
 				System.out.println();
 
-				if (rs.getInt(7) == 0 || rs.getString(9).equals("Not Active")) {
+				if (rs.getInt(6) == 0 || rs.getString(8).equals("Not Active")) {
 					System.out.println("Checking Account: N/A");
-				} else if (rs.getString(9).equals("Pending")) {
+				} else if (rs.getString(8).equals("Pending")) {
 					System.out.println("Checking Account: Pending");
 				} else {
-					System.out.println("Checking Account Number: " + rs.getInt(7));
-					System.out.printf("Checking Account Balance: $%.2f\n", rs.getDouble(6));
+					System.out.println("Checking Account Number: " + rs.getInt(6));
+					System.out.printf("Checking Account Balance: $%.2f\n", rs.getDouble(5));
 				}
 
 				System.out.println();
 
-				if (rs.getInt(11) == 0 || rs.getString(13).equals("Not Active")) {
+				if (rs.getInt(10) == 0 || rs.getString(12).equals("Not Active")) {
 					System.out.println("Savings Account: N/A");
-				} else if (rs.getString(13).equals("Pending")) {
+				} else if (rs.getString(12).equals("Pending")) {
 					System.out.println("Savings Account: Pending");
 				} else {
-					System.out.println("Savings Account Number: " + rs.getInt(11));
-					System.out.printf("Savings Account Balance: $%.2f\n", rs.getDouble(10));
+					System.out.println("Savings Account Number: " + rs.getInt(10));
+					System.out.printf("Savings Account Balance: $%.2f\n", rs.getDouble(9));
 				}
 
 				System.out.println();
 
-				if (rs.getInt(15) == 0 || rs.getString(18).equals("Not Active")) {
+				if (rs.getInt(14) == 0 || rs.getString(17).equals("Not Active")) {
 					System.out.println("Joint Account: N/A");
-				} else if (rs.getString(18).equals("Pending")) {
-
+				} else if (rs.getString(17).equals("Pending")) {
+					System.out.println("Joint Account: Pending");
 				} else {
-					System.out.println("Joint Account Number: " + rs.getInt(15));
-					System.out.printf("Joint Account Balance: $%.2f\n", rs.getDouble(14));
+					System.out.println("Joint Account Number: " + rs.getInt(14));
+					System.out.printf("Joint Account Balance: $%.2f\n", rs.getDouble(13));
 				}
 			}
 		} catch (SQLException e) {
@@ -189,7 +189,13 @@ public class DAO {
 		}
 		try {
 			Statement statement = connection.createStatement();
-			String sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			String sql = "";
+			if (accountChoice.equals("jointaccount")) {
+				sql = String.format("select * from %s where username = '%s' or username2 = '%s'", accountChoice,
+						username, username);
+			} else {
+				sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			}
 			ResultSet rs;
 			rs = statement.executeQuery(sql);
 			while (rs.next()) {
@@ -207,8 +213,14 @@ public class DAO {
 			}
 			balance = ba.getBalance();
 
-			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, balance,
-					username);
+			String update = "";
+			if (accountChoice.equals("jointaccount")) {
+				update = String.format("update %s set balance = %.2f where username = '%s' or username2 = '%s'",
+						accountChoice, this.balance, username, username);
+			} else {
+				update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
+						this.balance, username);
+			}
 			statement.executeUpdate(update);
 
 			System.out.println("Deposit Successful!");
@@ -236,7 +248,9 @@ public class DAO {
 					result += "Savings ";
 				}
 			}
-			String select3 = String.format("select accountstatus from jointaccount where username = '%s'", username);
+			String select3 = String.format(
+					"select accountstatus from jointaccount where username = '%s' or username2 = '%s'", username,
+					username);
 			ResultSet rs3 = statement.executeQuery(select3);
 			while (rs3.next()) {
 				if (rs3.getString(1).equals("Active")) {
@@ -261,7 +275,13 @@ public class DAO {
 		}
 		try {
 			Statement statement = connection.createStatement();
-			String sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			String sql = "";
+			if (accountChoice.equals("jointaccount")) {
+				sql = String.format("select * from %s where username = '%s' or username2 = '%s'", accountChoice,
+						username, username);
+			} else {
+				sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			}
 			ResultSet rs = statement.executeQuery(sql);
 			while (rs.next()) {
 				this.balance = rs.getDouble(1);
@@ -279,8 +299,14 @@ public class DAO {
 			}
 			this.balance = ba.getBalance();
 
-			String update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
-					this.balance, username);
+			String update = "";
+			if (accountChoice.equals("jointaccount")) {
+				update = String.format("update %s set balance = %.2f where username = '%s' or username2 = '%s'",
+						accountChoice, this.balance, username, username);
+			} else {
+				update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
+						this.balance, username);
+			}
 			statement.executeUpdate(update);
 
 			System.out.println("Withdraw Successful!");
@@ -295,7 +321,7 @@ public class DAO {
 			Statement statement = connection.createStatement();
 			String select = "select * from checkingaccount ";
 			String join1 = "left outer join savingsaccount on checkingaccount.username = savingsaccount.username ";
-			String join2 = "left outer join jointaccount on checkingaccount.username = jointaccount.username ";
+			String join2 = "left outer join jointaccount on checkingaccount.username = jointaccount.username or checkingaccount.username = jointaccount.username2";
 			ResultSet rs = statement.executeQuery(select + join1 + join2);
 			while (rs.next()) {
 				if (rs.getInt(2) == accountNumber) {
@@ -339,7 +365,13 @@ public class DAO {
 		}
 		try {
 			Statement statement = connection.createStatement();
-			String sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			String sql = "";
+			if (accountChoice.equals("jointaccount")) {
+				sql = String.format("select * from %s where username = '%s' or username2 = '%s'", accountChoice,
+						username, username);
+			} else {
+				sql = String.format("select * from %s where username = '%s'", accountChoice, username);
+			}
 			ResultSet rs = statement.executeQuery(sql);
 			while (rs.next()) {
 				this.balance = rs.getDouble(1);
@@ -389,8 +421,14 @@ public class DAO {
 
 			this.balance = ba.getBalance();
 
-			update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice, this.balance,
-					username);
+			if (accountChoice.equals("jointaccount")) {
+				update = String.format("update %s set balance = %.2f where username = '%s' or username2 = '%s'",
+						accountChoice, this.balance, username, username);
+			} else {
+				update = String.format("update %s set balance = %.2f where username = '%s'", accountChoice,
+						this.balance, username);
+			}
+
 			statement.executeUpdate(update);
 
 			System.out.println("Transfer Successful!");
@@ -553,8 +591,15 @@ public class DAO {
 		}
 		try {
 			Statement statement = connection.createStatement();
-			String sql = String.format("update %s set accountstatus = 'Not Active' where username = '%s'", accountType,
-					customerUsername);
+			String sql = "";
+			if (accountType.equals("jointaccount")) {
+				sql = String.format(
+						"update %s set accountstatus = 'Not Active', balance = '%.2f' where username = '%s' or username2 = '%s'",
+						accountType, 0.00, customerUsername, customerUsername);
+			} else {
+				sql = String.format("update %s set accountstatus = 'Not Active', balance = '%.2f' where username = '%s'",
+						accountType, 0.00, customerUsername);
+			}
 			statement.executeUpdate(sql);
 			System.out.println();
 			System.out.println("Cancel Success!");
@@ -580,30 +625,4 @@ public class DAO {
 		}
 	}
 
-	public void applyJoint(Connection connection, String username, String username2) {
-		try {
-			Statement statement = connection.createStatement();
-			String select = String.format("select accountnumber from jointaccount where username = '%s'", username);
-			ResultSet rs = statement.executeQuery(select);
-			int accountNumber = 0;
-			while (rs.next()) {
-				accountNumber = rs.getInt(1);
-			}
-
-			String sql = String.format(
-					"update jointaccount set username2 = '%s', accountstatus = 'Pending' where username = '%s'",
-					username2, username);
-			statement.executeUpdate(sql);
-			sql = String.format(
-					"update jointaccount set username2 = '%s', accountnumber = %d, accountstatus = 'Pending' where username = '%s'",
-					username, accountNumber, username2);
-			statement.executeUpdate(sql);
-			
-			System.out.println("Application Successful! Please check back later.");
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
 }

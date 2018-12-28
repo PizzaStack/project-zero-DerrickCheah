@@ -52,12 +52,12 @@ public class AccountCreationMenu {
 				b = false;
 				dao.setCheckingDBValues(connection, this.username, "Pending");
 				dao.setSavingsDBValues(connection, this.username, "Not Active");
-				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
+//				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else if (choice.equals("2") || choice.contains("savings")) {
 				b = false;
 				dao.setCheckingDBValues(connection, this.username, "Not Active");
 				dao.setSavingsDBValues(connection, this.username, "Pending");
-				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
+//				dao.setJointDBValues(connection, this.username, this.username, "Not Active");
 			} else {
 				System.out.print("Please enter a valid input: ");
 				input = new Scanner(System.in);
